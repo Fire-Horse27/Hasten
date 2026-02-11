@@ -1,6 +1,7 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
+import "../src/main/ipc";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -68,20 +69,10 @@ app.on('activate', () => {
 ipcMain.handle('app:getStatus', async () => {
   return {
     appName: 'Hasten',
-    dbReady: false
+    dbReady: true
   }
 })
 
-app.whenReady().then(async () => {
-  const { addAccount, getAccounts } = await import("../src/main/db");
-
-  const accounts = getAccounts();
-
-  if (accounts.length === 0) {
-    addAccount("Checking", "checking", 0);
-  }
-
-  console.log("Accounts in DB:", getAccounts());
-
+app.whenReady().then(() => {
   createWindow();
 });
