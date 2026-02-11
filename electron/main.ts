@@ -1,10 +1,9 @@
-import { app, BrowserWindow } from 'electron'
-import { createRequire } from 'node:module'
+import { app, BrowserWindow, ipcMain } from 'electron'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
-const require = createRequire(import.meta.url)
-const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // The built directory structure
 //
@@ -29,7 +28,7 @@ let win: BrowserWindow | null
 function createWindow() {
   win = new BrowserWindow({
     webPreferences: {
-      preload: path.join(__dirname, "preload.js"),
+      preload: path.join(__dirname, "preload.mjs"),
       contextIsolation: true,
       nodeIntegration: false
     }
@@ -66,4 +65,23 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+ipcMain.handle('app:getStatus', async () => {
+  return {
+    appName: 'Hasten',
+    dbReady: false
+  }
+})
+
+app.whenReady().then(async () => {
+  const { addAccount, getAccounts } = await import("../src/main/db");
+
+  const accounts = getAccounts();
+
+  if (accounts.length === 0) {
+    addAccount("Checking", "checking", 0);
+  }
+
+  console.log("Accounts in DB:", getAccounts());
+
+  createWindow();
+});
