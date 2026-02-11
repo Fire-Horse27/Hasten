@@ -1,18 +1,18 @@
-import { createRequire } from "node:module";
-const require = createRequire(import.meta.url);
-const Database = require("better-sqlite3");
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const Database = require('better-sqlite3')
 
-import { app } from "electron";
-import path from "path";
+import { app } from 'electron'
+import path from 'path'
 
 // Resolve DB location inside Electron user data directory
-const dbPath = path.join(app.getPath("userData"), "hasten.db");
+const dbPath = path.join(app.getPath('userData'), 'hasten.db')
 
 // Open database (synchronous, safe for desktop apps)
-const db = new Database(dbPath);
+const db = new Database(dbPath)
 
 // Ensure foreign keys are enforced
-db.pragma("foreign_keys = ON");
+db.pragma('foreign_keys = ON')
 
 // Initialize schema
 db.exec(`
@@ -39,61 +39,57 @@ CREATE TABLE IF NOT EXISTS transactions (
   FOREIGN KEY (account_id) REFERENCES accounts(id) ON DELETE CASCADE,
   FOREIGN KEY (category_id) REFERENCES categories(id)
 );
-`);
+`)
 
 // ---- Account API ----
 
-export function addAccount(
-  name: string,
-  type: string,
-  balance: number = 0
-) {
-  const stmt = db.prepare(`
+export function addAccount(name: string, type: string, balance: number = 0) {
+	const stmt = db.prepare(`
     INSERT INTO accounts (name, type, balance)
     VALUES (?, ?, ?)
-  `);
-  return stmt.run(name, type, balance);
+  `)
+	return stmt.run(name, type, balance)
 }
 
 export function getAccounts() {
-  const stmt = db.prepare(`
+	const stmt = db.prepare(`
     SELECT * FROM accounts
     ORDER BY name
-  `);
-  return stmt.all();
+  `)
+	return stmt.all()
 }
 
 // ---- Transaction API ----
 
 export function addTransaction(
-  accountId: number,
-  date: string,
-  amount: number,
-  payee?: string,
-  categoryId?: number,
-  memo?: string
+	accountId: number,
+	date: string,
+	amount: number,
+	payee?: string,
+	categoryId?: number,
+	memo?: string
 ) {
-  const stmt = db.prepare(`
+	const stmt = db.prepare(`
     INSERT INTO transactions
     (account_id, date, amount, payee, category_id, memo)
     VALUES (?, ?, ?, ?, ?, ?)
-  `);
-  return stmt.run(
-    accountId,
-    date,
-    amount,
-    payee ?? null,
-    categoryId ?? null,
-    memo ?? null
-  );
+  `)
+	return stmt.run(
+		accountId,
+		date,
+		amount,
+		payee ?? null,
+		categoryId ?? null,
+		memo ?? null
+	)
 }
 
 export function getTransactions(accountId: number) {
-  const stmt = db.prepare(`
+	const stmt = db.prepare(`
     SELECT *
     FROM transactions
     WHERE account_id = ?
     ORDER BY date DESC, id DESC
-  `);
-  return stmt.all(accountId);
+  `)
+	return stmt.all(accountId)
 }
