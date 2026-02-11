@@ -30,6 +30,8 @@ let win: BrowserWindow | null
 
 function createWindow() {
 	win = new BrowserWindow({
+		minWidth: 600,
+		minHeight: 400,
 		webPreferences: {
 			preload: path.join(__dirname, 'preload.mjs'),
 			contextIsolation: true,

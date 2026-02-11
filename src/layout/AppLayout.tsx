@@ -16,7 +16,7 @@ export default function AppLayout() {
 	]
 
 	return (
-		<div className="h-screen flex">
+		<div className="h-full flex">
 			<Sidebar
 				accounts={accounts}
 				selectedAccountId={selectedAccountId}
