@@ -8,6 +8,8 @@ export default function AppLayout() {
 
 	const [selectedPage, setSelectedPage] = useState<Page>('transactions')
 
+	const [sidebarWidth, setSidebarWidth] = useState(240)
+
 	return (
 		<div className="h-full flex flex-col">
 			<div className="v-full flex">
@@ -21,6 +23,8 @@ export default function AppLayout() {
 					<TransactionLayout
 						selectedAccountId={selectedAccountId}
 						setSelectedAccountId={setSelectedAccountId}
+						sidebarWidth={sidebarWidth}
+						setSidebarWidth={setSidebarWidth}
 					/>
 				)}
 			</div>

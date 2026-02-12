@@ -5,26 +5,28 @@ import TransactionPage from '../components/TransactionContent'
 type TransactionLayoutProps = {
 	selectedAccountId: string
 	setSelectedAccountId: (id: string) => void
+	sidebarWidth: number
+	setSidebarWidth: React.Dispatch<React.SetStateAction<number>>
 }
 
 export default function TransactionLayout({
 	selectedAccountId,
 	setSelectedAccountId,
+	sidebarWidth,
+	setSidebarWidth,
 }: TransactionLayoutProps) {
-	const [sidebarWidth, setSidebarWidth] = useState(240)
-
 	const isResizing = useRef(false)
 
 	useEffect(() => {
+		const RIGHT_MIN = 300
+		const LEFT_MIN = 150
+
+		setSidebarWidth((prev) => clamp(prev))
+
 		const handleMouseMove = (e: MouseEvent) => {
 			if (!isResizing.current) return
 
-			const minWidth = 180
-			const maxWidth = window.innerWidth - 100
-
-			const newWidth = e.clientX
-
-			setSidebarWidth(Math.max(minWidth, Math.min(maxWidth, newWidth)))
+			setSidebarWidth(clamp(e.clientX))
 		}
 
 		const handleMouseUp = () => {
@@ -34,14 +36,17 @@ export default function TransactionLayout({
 		}
 
 		const handleResize = () => {
-			const maxWidth = window.innerWidth - 200
-
-			setSidebarWidth((prev) => (prev > maxWidth ? maxWidth : prev))
+			setSidebarWidth((prev) => clamp(prev))
 		}
 
 		window.addEventListener('mousemove', handleMouseMove)
 		window.addEventListener('mouseup', handleMouseUp)
 		window.addEventListener('resize', handleResize)
+
+		const clamp = (width: number) => {
+			const maxWidth = window.innerWidth - RIGHT_MIN
+			return Math.max(LEFT_MIN, Math.min(maxWidth, width))
+		}
 
 		return () => {
 			window.removeEventListener('mousemove', handleMouseMove)
@@ -69,7 +74,11 @@ export default function TransactionLayout({
 
 	return (
 		<div className="h-full flex">
-			<div style={{ width: sidebarWidth }} className="h-full flex">
+			{/* Sidebar + Resize Handle */}
+			<div
+				style={{ width: sidebarWidth }}
+				className="h-full shrink-0 flex"
+			>
 				<Sidebar
 					accounts={accounts}
 					selectedAccountId={selectedAccountId}
@@ -83,7 +92,8 @@ export default function TransactionLayout({
 				/>
 			</div>
 
-			<div className="flex-1 p-2 pb-3">
+			{/* Main Content */}
+			<div className="flex-1 min-w-0 p-2 pb-3">
 				<TransactionPage
 					accountId={selectedAccountId}
 					accountName={selectedAccountName}
