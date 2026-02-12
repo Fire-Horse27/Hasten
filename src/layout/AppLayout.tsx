@@ -1,13 +1,12 @@
 import { useState } from 'react'
 import Sidebar from '../components/Sidebar'
-
-type Page = 'account' | 'calendar' | 'reports' | 'budget' | 'manage'
+import type { Page } from '../types/navigation'
 
 export default function AppLayout() {
 	const [selectedAccountId, setSelectedAccountId] = useState<string | null>(
 		'1'
 	)
-	const [selectedPage, setSelectedPage] = useState<Page>('account')
+	const [selectedPage, setSelectedPage] = useState<Page>('manage')
 
 	const accounts = [
 		{ id: '1', name: 'Checking', balance: 4532.21 },
@@ -23,18 +22,16 @@ export default function AppLayout() {
 				selectedPage={selectedPage}
 				onSelectAccount={(id) => {
 					setSelectedAccountId(id)
-					setSelectedPage('account')
 				}}
 				onSelectPage={(page) => {
 					setSelectedPage(page)
-					setSelectedAccountId(null)
 				}}
 			/>
 
 			<div className="flex-1 p-6">
 				<h1 className="text-xl font-semibold">
-					{selectedPage === 'account'
-						? `Account ${selectedAccountId}`
+					{selectedAccountId
+						? `${selectedPage} — Account ${selectedAccountId}`
 						: selectedPage}
 				</h1>
 			</div>
