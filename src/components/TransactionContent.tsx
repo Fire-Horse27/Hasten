@@ -11,15 +11,15 @@ type Transaction = {
 	balance: number
 }
 
-interface TransactionPageProps {
+interface TransactionContentProps {
 	accountId: string
 	accountName: string
 }
 
-export default function TransactionPage({
+export default function TransactionContent({
 	accountId,
 	accountName,
-}: TransactionPageProps) {
+}: TransactionContentProps) {
 	// Mock data (replace later with real data)
 	const transactions: Transaction[] = useMemo(
 		() => [

@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react'
+import { useRef, useEffect } from 'react'
 import Sidebar from '../components/Sidebar'
-import TransactionPage from '../components/TransactionContent'
+import TransactionContent from '../components/TransactionContent'
 
 type TransactionLayoutProps = {
 	selectedAccountId: string
@@ -94,7 +94,7 @@ export default function TransactionLayout({
 
 			{/* Main Content */}
 			<div className="flex-1 min-w-0 p-2 pb-3">
-				<TransactionPage
+				<TransactionContent
 					accountId={selectedAccountId}
 					accountName={selectedAccountName}
 				/>
